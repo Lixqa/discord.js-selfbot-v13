@@ -253,10 +253,18 @@ class GuildMemberManager extends CachedManager {
    */
 
   /**
+   * Range bounds for a range query.
+   * @template T
+   * @typedef {Object} GuildSearchRangeBounds
+   * @property {T} [gte] The lower bound (inclusive)
+   * @property {T} [lte] The upper bound (inclusive)
+   */
+
+  /**
    * Represents a numeric or string range query.
    * @template T
    * @typedef {Object} GuildSearchRangeQuery
-   * @property {{ gte?: T, lte?: T }} range The range bounds.
+   * @property {GuildSearchRangeBounds<T>} range The range bounds
    */
 
   /**
