@@ -283,7 +283,7 @@ class GuildMemberManager extends CachedManager {
 
     return data.members.reduce(
       (col, { member }) => col.set(member.user.id, this._add(member, cache)),
-      new Collection()
+      new Collection(),
     );
   }
 
