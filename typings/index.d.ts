@@ -6918,53 +6918,56 @@ export interface GuildWidgetSettingsData {
 
 export type GuildSearchMembersOptionsRangeValue = number | string;
 
-export type GuildSearchMembersOptionsRangeQuery<T extends GuildSearchMembersOptionsRangeValue = number> = {
+export interface GuildSearchMembersOptionsRangeQuery<
+  T extends GuildSearchMembersOptionsRangeValue = number,
+> {
   range: {
     gte?: T;
     lte?: T;
   };
-};
+}
 
-export type GuildSearchMembersOptionsOrQuery = {
+export interface GuildSearchMembersOptionsOrQuery {
   or_query: string[];
-};
+}
 
-export type GuildSearchMembersOptionsAndQuery = {
+export interface GuildSearchMembersOptionsAndQuery {
   and_query: string[];
-};
+}
 
 export type GuildSearchMembersOptionsListQuery =
   | GuildSearchMembersOptionsOrQuery
   | GuildSearchMembersOptionsAndQuery;
 
-export type GuildSearchMembersOptionsRangeable<T extends GuildSearchMembersOptionsRangeValue = number> =
-  | GuildSearchMembersOptionsRangeQuery<T>;
+export type GuildSearchMembersOptionsRangeable<
+  T extends GuildSearchMembersOptionsRangeValue = number,
+> = GuildSearchMembersOptionsRangeQuery<T>;
 
-export type GuildSearchMembersOptionsFlexibleQuery<T extends GuildSearchMembersOptionsRangeValue = number> =
-  | GuildSearchMembersOptionsListQuery
-  | GuildSearchMembersOptionsRangeable<T>;
+export type GuildSearchMembersOptionsFlexibleQuery<
+  T extends GuildSearchMembersOptionsRangeValue = number,
+> = GuildSearchMembersOptionsListQuery | GuildSearchMembersOptionsRangeable<T>;
 
-export type GuildSearchMembersOptionsSafetySignalsQuery = {
+export interface GuildSearchMembersOptionsSafetySignalsQuery {
   unusual_dm_activity_until?: GuildSearchMembersOptionsRangeQuery<number>;
   communication_disabled_until?: GuildSearchMembersOptionsRangeQuery<number>;
   unusual_account_activity?: boolean;
   automod_quarantined_username?: boolean;
-};
+}
 
-export type GuildSearchMembersOptionsFilterFields = {
+export interface GuildSearchMembersOptionsFilterFields {
   usernames?: GuildSearchMembersOptionsListQuery;
   role_ids?: GuildSearchMembersOptionsListQuery;
   guild_joined_at?: GuildSearchMembersOptionsRangeQuery<number>;
   user_id?: GuildSearchMembersOptionsRangeQuery<string>;
   source_invite_code?: GuildSearchMembersOptionsListQuery;
   safety_signals?: GuildSearchMembersOptionsSafetySignalsQuery;
-};
+}
 
-export type GuildSearchMembersOptions = {
+export interface GuildSearchMembersOptions {
   or_query?: GuildSearchMembersOptionsFilterFields;
   and_query?: GuildSearchMembersOptionsFilterFields;
   limit?: number;
-};
+}
 
 // TODO: use conditional types for better TS support
 export interface GuildScheduledEventCreateOptions {
