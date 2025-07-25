@@ -310,7 +310,7 @@ class GuildMemberManager extends CachedManager {
    * @private
    */
   makeGuildMemberSearchBody(options) {
-    const { limit = 1, cache, or, and, ...topLevelFilters } = options;
+    const { limit = 1, or, and, ...topLevelFilters } = options;
 
     const toSnakeCase = str => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 
@@ -499,8 +499,8 @@ class GuildMemberManager extends CachedManager {
    * @returns {Promise<Collection<Snowflake, GuildMember>>}
    */
   async search(options = {}) {
-    const { cache = true } = options;
-    const requestBody = this.makeGuildMemberSearchBody(options);
+    const { cache = true, ...restOptions } = options;
+    const requestBody = this.makeGuildMemberSearchBody(restOptions);
 
     const data = await this.client.api.guilds(this.guild.id, 'members-search').post({
       data: requestBody,
