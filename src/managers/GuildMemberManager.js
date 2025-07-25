@@ -229,27 +229,52 @@ class GuildMemberManager extends CachedManager {
   /**
    * Options for searching guild members using logical filter queries.
    * @typedef {Object} GuildSearchMembersOptions
-   * @property {GuildSearchQueryBlock} [or_query] Applies a logical OR to any nested filters.
-   * @property {GuildSearchQueryBlock} [and_query] Applies a logical AND to any nested filters.
+   * @property {GuildSearchQueryBlock} [or] Applies a logical OR to any nested filters.
+   * @property {GuildSearchQueryBlock} [and] Applies a logical AND to any nested filters.
    * @property {number} [limit=1] The maximum number of members to return.
+   * @property {boolean} [cache=true] Whether to cache the results.
+   * @property {GuildSearchUsernamesQuery|string} [usernames] Filters by usernames using OR logic only, or a single username string.
+   * @property {GuildSearchListQuery|RoleResolvable} [roles] Filters by roles using OR or AND logic, or a single role.
+   * @property {GuildSearchRangeQuery<number>} [guildJoinedAt] Filters by guild join timestamp using range queries only.
+   * @property {GuildSearchUserQuery|string} [users] Filters by users using OR logic only, or a single user string.
+   * @property {GuildSearchSourceInviteCodeQuery|string} [sourceInviteCode] Filters by invite codes using OR logic only, or a single invite code.
+   * @property {GuildSearchSafetySignalsQuery} [safetySignals] Internal safety filters.
    */
 
   /**
    * A block of filters for AND/OR logic.
    * @typedef {Object} GuildSearchQueryBlock
-   * @property {GuildSearchListQuery} [usernames] Filters by usernames using OR or AND logic.
-   * @property {GuildSearchListQuery} [role_ids] Filters by role IDs using OR or AND logic.
-   * @property {GuildSearchRangeQuery<number>} [guild_joined_at] Filters by guild join timestamp.
-   * @property {GuildSearchRangeQuery<string>} [user_id] Filters by user ID range.
-   * @property {GuildSearchListQuery} [source_invite_code] Filters by invite codes.
-   * @property {GuildSearchSafetySignalsQuery} [safety_signals] Internal safety filters.
+   * @property {GuildSearchUsernamesQuery} [usernames] Filters by usernames using OR logic only.
+   * @property {GuildSearchListQuery} [roles] Filters by roles using OR or AND logic.
+   * @property {GuildSearchRangeQuery<number>} [guildJoinedAt] Filters by guild join timestamp using range queries only.
+   * @property {GuildSearchUserQuery} [users] Filters by users using OR logic only.
+   * @property {GuildSearchSourceInviteCodeQuery} [sourceInviteCode] Filters by invite codes using OR logic only.
+   * @property {GuildSearchSafetySignalsQuery} [safetySignals] Internal safety filters with restrictions on certain fields.
    */
 
   /**
    * Represents an OR or AND query with string values.
    * @typedef {Object} GuildSearchListQuery
-   * @property {string[]} [or_query] Matches if any values match.
-   * @property {string[]} [and_query] Matches only if all values match.
+   * @property {string[]} [or] Matches if any values match.
+   * @property {string[]} [and] Matches only if all values match.
+   */
+
+  /**
+   * Represents an OR-only query for usernames.
+   * @typedef {Object} GuildSearchUsernamesQuery
+   * @property {string[]} or Matches if any usernames match.
+   */
+
+  /**
+   * Represents an OR-only query for users.
+   * @typedef {Object} GuildSearchUserQuery
+   * @property {UserResolvable[]} or Matches if any users match.
+   */
+
+  /**
+   * Represents an OR-only query for source invite codes.
+   * @typedef {Object} GuildSearchSourceInviteCodeQuery
+   * @property {string[]} or Matches if any invite codes match.
    */
 
   /**
@@ -269,24 +294,216 @@ class GuildMemberManager extends CachedManager {
 
   /**
    * Internal Discord safety signals used for filtering.
+   * Note: unusualDmActivityUntil, communicationDisabledUntil, unusualAccountActivity,
+   * and automodQuarantinedUsername only support OR queries, not AND queries.
    * @typedef {Object} GuildSearchSafetySignalsQuery
-   * @property {GuildSearchRangeQuery<number>} [unusual_dm_activity_until] Unusual DM activity time window.
-   * @property {GuildSearchRangeQuery<number>} [communication_disabled_until] Timeout window.
-   * @property {boolean} [unusual_account_activity] Whether the account is flagged as unusual.
-   * @property {boolean} [automod_quarantined_username] Whether AutoMod quarantined the username.
+   * @property {GuildSearchRangeQuery<number>} [unusualDmActivityUntil] Unusual DM activity time window (OR queries only).
+   * @property {GuildSearchRangeQuery<number>} [communicationDisabledUntil] Timeout window (OR queries only).
+   * @property {boolean} [unusualAccountActivity] Whether the account is flagged as unusual (OR queries only).
+   * @property {boolean} [automodQuarantinedUsername] Whether AutoMod quarantined the username (OR queries only).
    */
 
   /**
+   * Converts the public search options to the internal API format.
+   * @param {GuildSearchMembersOptions} options The search options
+   * @returns {Object} The formatted request body
+   * @private
+   */
+  makeGuildMemberSearchBody(options) {
+    const { limit = 1, cache, or, and, ...topLevelFilters } = options;
+
+    const toSnakeCase = str => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
+    const processFilterValue = (key, value) => {
+      if (key === 'roles' && value) {
+        if (value.or) {
+          return { or_query: value.or.map(role => this.guild.roles.resolveId(role)).filter(Boolean) };
+        }
+        if (value.and) {
+          return { and_query: value.and.map(role => this.guild.roles.resolveId(role)).filter(Boolean) };
+        }
+        if (typeof value === 'string' || typeof value === 'number' || value?.id) {
+          const resolvedRole = this.guild.roles.resolveId(value);
+          return resolvedRole ? { and_query: [resolvedRole] } : { and_query: [] };
+        }
+      }
+
+      if (key === 'usernames' && value) {
+        if (value.or) {
+          return { or_query: value.or };
+        }
+        if (value.and) {
+          throw new TypeError("usernames only supports 'or_query'. 'and_query' is not valid for this field.");
+        }
+        if (typeof value === 'string') {
+          return { or_query: [value] };
+        }
+      }
+
+      if (key === 'sourceInviteCode' && value) {
+        if (value.or) {
+          return { or_query: value.or };
+        }
+        if (value.and) {
+          throw new TypeError("'and' is not allowed for 'sourceInviteCode'. Use 'or' instead.");
+        }
+        if (typeof value === 'string') {
+          return { or_query: [value] };
+        }
+      }
+
+      if (key === 'users' && value) {
+        if (value?.range) {
+          throw new TypeError("'range' is not allowed for 'users'. Use 'or' instead.");
+        }
+        if (value.or) {
+          return { or_query: value.or.map(user => this.client.users.resolveId(user) || user) };
+        }
+        if (value.and) {
+          throw new TypeError("'and' is not allowed for 'users'. Use 'or' instead.");
+        }
+        if (typeof value === 'string') {
+          const resolvedUser = this.client.users.resolveId(value) || value;
+          return { or_query: [resolvedUser] };
+        }
+      }
+
+      if (key === 'safetySignals' && value) {
+        const signals = {};
+        const orOnlyFields = [
+          'unusualDmActivityUntil',
+          'communicationDisabledUntil',
+          'unusualAccountActivity',
+          'automodQuarantinedUsername',
+        ];
+
+        for (const [signalKey, signalValue] of Object.entries(value)) {
+          const snakeKey = toSnakeCase(signalKey);
+
+          if (orOnlyFields.includes(signalKey) && signalValue?.and) {
+            throw new TypeError(`'and' is not allowed for 'safetySignals.${signalKey}'. Use 'or' instead.`);
+          }
+
+          if (signalValue?.range) {
+            const range = {};
+            if (signalValue.range.gte) {
+              range.gte =
+                signalValue.range.gte instanceof Date ? signalValue.range.gte.getTime() : signalValue.range.gte;
+            }
+            if (signalValue.range.lte) {
+              range.lte =
+                signalValue.range.lte instanceof Date ? signalValue.range.lte.getTime() : signalValue.range.lte;
+            }
+            signals[snakeKey] = { range };
+          } else if (signalValue?.or) {
+            signals[snakeKey] = { or_query: signalValue.or };
+          } else if (signalValue?.and && !orOnlyFields.includes(signalKey)) {
+            signals[snakeKey] = { and_query: signalValue.and };
+          } else {
+            signals[snakeKey] = signalValue;
+          }
+        }
+        return signals;
+      }
+
+      if (key === 'guildJoinedAt' && value) {
+        if (value?.range) {
+          const range = {};
+          if (value.range.gte) {
+            range.gte = value.range.gte instanceof Date ? value.range.gte.getTime() : value.range.gte;
+          }
+          if (value.range.lte) {
+            range.lte = value.range.lte instanceof Date ? value.range.lte.getTime() : value.range.lte;
+          }
+          return { range };
+        }
+        if (value.or) {
+          throw new TypeError("'guildJoinedAt' only supports range queries. Use 'range' instead of 'or'.");
+        }
+        if (value.and) {
+          throw new TypeError("'guildJoinedAt' only supports range queries. Use 'range' instead of 'and'.");
+        }
+      }
+
+      if (value?.or) {
+        return { or_query: value.or };
+      }
+      if (value?.and) {
+        return { and_query: value.and };
+      }
+
+      return value;
+    };
+
+    const convertFilters = filters => {
+      const converted = {};
+      for (const [key, value] of Object.entries(filters)) {
+        if (value !== undefined) {
+          const snakeKey =
+            key === 'roles'
+              ? 'role_ids'
+              : key === 'users'
+              ? 'user_id'
+              : key === 'safetySignals'
+              ? 'safety_signals'
+              : toSnakeCase(key);
+          converted[snakeKey] = processFilterValue(key, value);
+        }
+      }
+      return converted;
+    };
+
+    const body = { limit };
+
+    const hasTopLevelFilters = Object.keys(topLevelFilters).length > 0;
+
+    if (hasTopLevelFilters && !and && !or) {
+      body.and_query = convertFilters(topLevelFilters);
+    } else if (hasTopLevelFilters && (and || or)) {
+      const topLevelConverted = convertFilters(topLevelFilters);
+      if (and) {
+        body.and_query = { ...convertFilters(and), ...topLevelConverted };
+      } else {
+        body.and_query = topLevelConverted;
+      }
+      if (or) {
+        body.or_query = convertFilters(or);
+      }
+    } else {
+      if (and) {
+        body.and_query = convertFilters(and);
+      }
+      if (or) {
+        body.or_query = convertFilters(or);
+      }
+    }
+
+    return body;
+  }
+
+  /**
    * Searches for members in the guild based on a query.
+   *
+   * Field Restrictions:
+   * - usernames: Only supports 'or' queries
+   * - users: Only supports 'or' queries and single string values
+   * - guildJoinedAt: Only supports range queries
+   * - sourceInviteCode: Only supports 'or' queries
+   * - safetySignals.unusualDmActivityUntil: Only supports 'or' queries
+   * - safetySignals.communicationDisabledUntil: Only supports 'or' queries
+   * - safetySignals.unusualAccountActivity: Only supports 'or' queries
+   * - safetySignals.automodQuarantinedUsername: Only supports 'or' queries
+   * - roles: Supports both 'and' and 'or' queries
+   *
    * @param {GuildSearchMembersOptions} options Options for searching members
    * @returns {Promise<Collection<Snowflake, GuildMember>>}
    */
-  async search({ limit = 1, cache = true, ...queries } = {}) {
+  async search(options = {}) {
+    const { cache = true } = options;
+    const requestBody = this.makeGuildMemberSearchBody(options);
+
     const data = await this.client.api.guilds(this.guild.id, 'members-search').post({
-      data: {
-        limit,
-        ...queries,
-      },
+      data: requestBody,
     });
 
     return data.members.reduce(

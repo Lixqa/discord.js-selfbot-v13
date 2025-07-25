@@ -1683,16 +1683,16 @@ export class GuildAuditLogs<T extends GuildAuditLogsResolvable = 'ALL'> {
 export class GuildAuditLogsEntry<
   TActionRaw extends GuildAuditLogsResolvable = 'ALL',
   TAction = TActionRaw extends keyof GuildAuditLogsIds
-    ? GuildAuditLogsIds[TActionRaw]
-    : TActionRaw extends null
-    ? 'ALL'
-    : TActionRaw,
+  ? GuildAuditLogsIds[TActionRaw]
+  : TActionRaw extends null
+  ? 'ALL'
+  : TActionRaw,
   TActionType extends GuildAuditLogsActionType = TAction extends keyof GuildAuditLogsTypes
-    ? GuildAuditLogsTypes[TAction][1]
-    : 'ALL',
+  ? GuildAuditLogsTypes[TAction][1]
+  : 'ALL',
   TTargetType extends GuildAuditLogsTarget = TAction extends keyof GuildAuditLogsTypes
-    ? GuildAuditLogsTypes[TAction][0]
-    : 'UNKNOWN',
+  ? GuildAuditLogsTypes[TAction][0]
+  : 'UNKNOWN',
 > {
   private constructor(guild: Guild, data: RawGuildAuditLogEntryData, logs?: GuildAuditLogs);
   public action: TAction;
@@ -2326,8 +2326,8 @@ export class MessageActionRow<
   T extends MessageActionRowComponent | ModalActionRowComponent = MessageActionRowComponent,
   U = T extends ModalActionRowComponent ? ModalActionRowComponentResolvable : MessageActionRowComponentResolvable,
   V = T extends ModalActionRowComponent
-    ? APIActionRowComponent<APIModalActionRowComponent>
-    : APIActionRowComponent<APIMessageActionRowComponent>,
+  ? APIActionRowComponent<APIModalActionRowComponent>
+  : APIActionRowComponent<APIMessageActionRowComponent>,
 > extends BaseMessageComponent {
   // tslint:disable-next-line:ban-ts-ignore
   // @ts-ignore (TS:2344, Caused by TypeScript 4.8)
@@ -4366,13 +4366,13 @@ export class ApplicationCommandPermissionsManager<
   public remove(
     options:
       | (FetchSingleOptions & {
-          users: UserResolvable | UserResolvable[];
-          roles?: RoleResolvable | RoleResolvable[];
-        })
+        users: UserResolvable | UserResolvable[];
+        roles?: RoleResolvable | RoleResolvable[];
+      })
       | (FetchSingleOptions & {
-          users?: UserResolvable | UserResolvable[];
-          roles: RoleResolvable | RoleResolvable[];
-        }),
+        users?: UserResolvable | UserResolvable[];
+        roles: RoleResolvable | RoleResolvable[];
+      }),
   ): Promise<ApplicationCommandPermissions[]>;
   public set(
     options: FetchSingleOptions & { permissions: ApplicationCommandPermissionData[] },
@@ -5333,12 +5333,12 @@ export interface ApplicationCommandChannelOption extends BaseApplicationCommandO
 
 export interface ApplicationCommandAutocompleteOption extends Omit<BaseApplicationCommandOptionsData, 'autocomplete'> {
   type:
-    | 'STRING'
-    | 'NUMBER'
-    | 'INTEGER'
-    | ApplicationCommandOptionTypes.STRING
-    | ApplicationCommandOptionTypes.NUMBER
-    | ApplicationCommandOptionTypes.INTEGER;
+  | 'STRING'
+  | 'NUMBER'
+  | 'INTEGER'
+  | ApplicationCommandOptionTypes.STRING
+  | ApplicationCommandOptionTypes.NUMBER
+  | ApplicationCommandOptionTypes.INTEGER;
   autocomplete: true;
 }
 
@@ -5728,8 +5728,8 @@ export type CacheFactory = (
 
 export type CacheWithLimitsOptions = {
   [K in keyof Caches]?: Caches[K][0]['prototype'] extends DataManager<infer K, infer V, any>
-    ? LimitedCollectionOptions<K, V> | number
-    : never;
+  ? LimitedCollectionOptions<K, V> | number
+  : never;
 };
 export interface CategoryCreateChannelOptions {
   permissionOverwrites?: OverwriteResolvable[] | Collection<Snowflake, OverwriteResolvable>;
@@ -6098,12 +6098,12 @@ export interface ConstantsClientApplicationAssetTypes {
 export type AutocompleteFocusedOption = Pick<CommandInteractionOption, 'name'> & {
   focused: true;
   type:
-    | 'STRING'
-    | 'INTEGER'
-    | 'NUMBER'
-    | ApplicationCommandOptionTypes.STRING
-    | ApplicationCommandOptionTypes.INTEGER
-    | ApplicationCommandOptionTypes.NUMBER;
+  | 'STRING'
+  | 'INTEGER'
+  | 'NUMBER'
+  | ApplicationCommandOptionTypes.STRING
+  | ApplicationCommandOptionTypes.INTEGER
+  | ApplicationCommandOptionTypes.NUMBER;
   value: string;
 };
 
@@ -6685,20 +6685,20 @@ export interface GuildAuditLogsEntryExtraField {
   MESSAGE_UNPIN: { channel: GuildTextBasedChannel | { id: Snowflake }; messageId: Snowflake };
   MEMBER_DISCONNECT: { count: number };
   CHANNEL_OVERWRITE_CREATE:
-    | Role
-    | GuildMember
-    | { id: Snowflake; name: string; type: OverwriteTypes.role }
-    | { id: Snowflake; type: OverwriteTypes.member };
+  | Role
+  | GuildMember
+  | { id: Snowflake; name: string; type: OverwriteTypes.role }
+  | { id: Snowflake; type: OverwriteTypes.member };
   CHANNEL_OVERWRITE_UPDATE:
-    | Role
-    | GuildMember
-    | { id: Snowflake; name: string; type: OverwriteTypes.role }
-    | { id: Snowflake; type: OverwriteTypes.member };
+  | Role
+  | GuildMember
+  | { id: Snowflake; name: string; type: OverwriteTypes.role }
+  | { id: Snowflake; type: OverwriteTypes.member };
   CHANNEL_OVERWRITE_DELETE:
-    | Role
-    | GuildMember
-    | { id: Snowflake; name: string; type: OverwriteTypes.role }
-    | { id: Snowflake; type: OverwriteTypes.member };
+  | Role
+  | GuildMember
+  | { id: Snowflake; name: string; type: OverwriteTypes.role }
+  | { id: Snowflake; type: OverwriteTypes.member };
   STAGE_INSTANCE_CREATE: StageChannel | { id: Snowflake };
   STAGE_INSTANCE_DELETE: StageChannel | { id: Snowflake };
   STAGE_INSTANCE_UPDATE: StageChannel | { id: Snowflake };
@@ -6928,16 +6928,28 @@ export interface GuildSearchMembersOptionsRangeQuery<
 }
 
 export interface GuildSearchMembersOptionsOrQuery {
-  or_query: string[];
+  or: string[];
 }
 
 export interface GuildSearchMembersOptionsAndQuery {
-  and_query: string[];
+  and: string[];
 }
 
 export type GuildSearchMembersOptionsListQuery =
   | GuildSearchMembersOptionsOrQuery
   | GuildSearchMembersOptionsAndQuery;
+
+export interface GuildSearchMembersOptionsUsernamesQuery {
+  or: string[];
+}
+
+export interface GuildSearchMembersOptionsUserQuery {
+  or: string[];
+}
+
+export interface GuildSearchMembersOptionsSourceInviteCodeQuery {
+  or: (GuildInviteSourceCode | string)[];
+}
 
 export type GuildSearchMembersOptionsRangeable<
   T extends GuildSearchMembersOptionsRangeValue = number,
@@ -6947,26 +6959,36 @@ export type GuildSearchMembersOptionsFlexibleQuery<
   T extends GuildSearchMembersOptionsRangeValue = number,
 > = GuildSearchMembersOptionsListQuery | GuildSearchMembersOptionsRangeable<T>;
 
+export interface GuildSearchMembersOptionsSafetySignalsOrOnlyQuery {
+  or: (number | Date | boolean)[];
+}
+
 export interface GuildSearchMembersOptionsSafetySignalsQuery {
-  unusual_dm_activity_until?: GuildSearchMembersOptionsRangeQuery<number>;
-  communication_disabled_until?: GuildSearchMembersOptionsRangeQuery<number>;
-  unusual_account_activity?: boolean;
-  automod_quarantined_username?: boolean;
+  unusualDmActivityUntil?: GuildSearchMembersOptionsRangeQuery<number | Date> | GuildSearchMembersOptionsSafetySignalsOrOnlyQuery;
+  communicationDisabledUntil?: GuildSearchMembersOptionsRangeQuery<number | Date> | GuildSearchMembersOptionsSafetySignalsOrOnlyQuery;
+  unusualAccountActivity?: boolean | GuildSearchMembersOptionsSafetySignalsOrOnlyQuery;
+  automodQuarantinedUsername?: boolean | GuildSearchMembersOptionsSafetySignalsOrOnlyQuery;
 }
 
 export interface GuildSearchMembersOptionsFilterFields {
-  usernames?: GuildSearchMembersOptionsListQuery;
-  role_ids?: GuildSearchMembersOptionsListQuery;
-  guild_joined_at?: GuildSearchMembersOptionsRangeQuery<number>;
-  user_id?: GuildSearchMembersOptionsRangeQuery<string>;
-  source_invite_code?: GuildSearchMembersOptionsListQuery;
-  safety_signals?: GuildSearchMembersOptionsSafetySignalsQuery;
+  usernames?: GuildSearchMembersOptionsUsernamesQuery | string;
+  roles?: GuildSearchMembersOptionsRoleQuery | RoleResolvable;
+  guildJoinedAt?: GuildSearchMembersOptionsRangeQuery<number | Date>;
+  users?: GuildSearchMembersOptionsUserQuery | string;
+  sourceInviteCode?: GuildSearchMembersOptionsSourceInviteCodeQuery | (number | string);
+  safetySignals?: GuildSearchMembersOptionsSafetySignalsQuery;
 }
 
-export interface GuildSearchMembersOptions {
-  or_query?: GuildSearchMembersOptionsFilterFields;
-  and_query?: GuildSearchMembersOptionsFilterFields;
+export interface GuildSearchMembersOptionsRoleQuery {
+  or?: RoleResolvable[];
+  and?: RoleResolvable[];
+}
+
+export interface GuildSearchMembersOptions extends Partial<GuildSearchMembersOptionsFilterFields> {
+  or?: GuildSearchMembersOptionsFilterFields;
+  and?: GuildSearchMembersOptionsFilterFields;
   limit?: number;
+  cache?: boolean;
 }
 
 // TODO: use conditional types for better TS support
@@ -6986,24 +7008,24 @@ export interface GuildScheduledEventCreateOptions {
 
 export type GuildScheduledEventRecurrenceRuleOptions =
   | BaseGuildScheduledEventRecurrenceRuleOptions<
-      GuildScheduledEventRecurrenceRuleFrequency.Yearly,
-      {
-        byMonth: readonly GuildScheduledEventRecurrenceRuleMonth[];
-        byMonthDay: readonly number[];
-      }
-    >
+    GuildScheduledEventRecurrenceRuleFrequency.Yearly,
+    {
+      byMonth: readonly GuildScheduledEventRecurrenceRuleMonth[];
+      byMonthDay: readonly number[];
+    }
+  >
   | BaseGuildScheduledEventRecurrenceRuleOptions<
-      GuildScheduledEventRecurrenceRuleFrequency.Monthly,
-      {
-        byNWeekday: readonly GuildScheduledEventRecurrenceRuleNWeekday[];
-      }
-    >
+    GuildScheduledEventRecurrenceRuleFrequency.Monthly,
+    {
+      byNWeekday: readonly GuildScheduledEventRecurrenceRuleNWeekday[];
+    }
+  >
   | BaseGuildScheduledEventRecurrenceRuleOptions<
-      GuildScheduledEventRecurrenceRuleFrequency.Weekly | GuildScheduledEventRecurrenceRuleFrequency.Daily,
-      {
-        byWeekday: readonly GuildScheduledEventRecurrenceRuleWeekday[];
-      }
-    >;
+    GuildScheduledEventRecurrenceRuleFrequency.Weekly | GuildScheduledEventRecurrenceRuleFrequency.Daily,
+    {
+      byWeekday: readonly GuildScheduledEventRecurrenceRuleWeekday[];
+    }
+  >;
 
 type BaseGuildScheduledEventRecurrenceRuleOptions<
   Frequency extends GuildScheduledEventRecurrenceRuleFrequency,
@@ -7041,8 +7063,8 @@ export type GuildScheduledEventManagerFetchResult<
 
 export type GuildScheduledEventManagerFetchSubscribersResult<T extends FetchGuildScheduledEventSubscribersOptions> =
   T extends { withMember: true }
-    ? Collection<Snowflake, GuildScheduledEventUser<true>>
-    : Collection<Snowflake, GuildScheduledEventUser<false>>;
+  ? Collection<Snowflake, GuildScheduledEventUser<true>>
+  : Collection<Snowflake, GuildScheduledEventUser<false>>;
 
 export type GuildScheduledEventPrivacyLevel = keyof typeof GuildScheduledEventPrivacyLevels;
 
@@ -7240,8 +7262,8 @@ export type ModalActionRowComponentResolvable =
 
 export interface MessageActionRowOptions<
   T extends
-    | MessageActionRowComponentResolvable
-    | ModalActionRowComponentResolvable = MessageActionRowComponentResolvable,
+  | MessageActionRowComponentResolvable
+  | ModalActionRowComponentResolvable = MessageActionRowComponentResolvable,
 > extends BaseMessageComponentOptions {
   components: T[];
 }
@@ -7533,8 +7555,8 @@ export type MFALevel = keyof typeof MFALevels;
 
 export interface ModalOptions {
   components:
-    | MessageActionRow<ModalActionRowComponent>[]
-    | MessageActionRowOptions<ModalActionRowComponentResolvable>[];
+  | MessageActionRow<ModalActionRowComponent>[]
+  | MessageActionRowOptions<ModalActionRowComponentResolvable>[];
   customId: string;
   title: string;
 }
@@ -7702,8 +7724,8 @@ export type Partialize<
   id: Snowflake;
   partial: true;
 } & {
-  [K in keyof Omit<T, 'client' | 'id' | 'partial' | E>]: K extends N ? null : K extends M ? T[K] | null : T[K];
-};
+    [K in keyof Omit<T, 'client' | 'id' | 'partial' | E>]: K extends N ? null : K extends M ? T[K] | null : T[K];
+  };
 
 export interface PartialDMChannel extends Partialize<DMChannel, null, null, 'lastMessageId'> {
   lastMessageId: undefined;
@@ -7941,8 +7963,8 @@ export interface SweeperDefinitions {
 
 export type SweeperOptions = {
   [K in keyof SweeperDefinitions]?: SweeperDefinitions[K][2] extends true
-    ? SweepOptions<SweeperDefinitions[K][0], SweeperDefinitions[K][1]> | LifetimeSweepOptions
-    : SweepOptions<SweeperDefinitions[K][0], SweeperDefinitions[K][1]>;
+  ? SweepOptions<SweeperDefinitions[K][0], SweeperDefinitions[K][1]> | LifetimeSweepOptions
+  : SweepOptions<SweeperDefinitions[K][0], SweeperDefinitions[K][1]>;
 };
 
 export interface LimitedCollectionOptions<K, V> {
