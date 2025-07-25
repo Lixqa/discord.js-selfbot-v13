@@ -227,11 +227,45 @@ class GuildMemberManager extends CachedManager {
   }
 
   /**
-   * Options used for searching guild members.
+   * Options for searching guild members using logical filter queries.
    * @typedef {Object} GuildSearchMembersOptions
-   * @property {string} query Filter members whose username or nickname start with this query
-   * @property {number} [limit=1] Maximum number of members to search
-   * @property {boolean} [cache=true] Whether or not to cache the fetched member(s)
+   * @property {GuildSearchQueryBlock} [or_query] Applies a logical OR to any nested filters.
+   * @property {GuildSearchQueryBlock} [and_query] Applies a logical AND to any nested filters.
+   * @property {number} [limit=1] The maximum number of members to return.
+   */
+
+  /**
+   * A block of filters for AND/OR logic.
+   * @typedef {Object} GuildSearchQueryBlock
+   * @property {GuildSearchListQuery} [usernames] Filters by usernames using OR or AND logic.
+   * @property {GuildSearchListQuery} [role_ids] Filters by role IDs using OR or AND logic.
+   * @property {GuildSearchRangeQuery<number>} [guild_joined_at] Filters by guild join timestamp.
+   * @property {GuildSearchRangeQuery<string>} [user_id] Filters by user ID range.
+   * @property {GuildSearchListQuery} [source_invite_code] Filters by invite codes.
+   * @property {GuildSearchSafetySignalsQuery} [safety_signals] Internal safety filters.
+   */
+
+  /**
+   * Represents an OR or AND query with string values.
+   * @typedef {Object} GuildSearchListQuery
+   * @property {string[]} [or_query] Matches if any values match.
+   * @property {string[]} [and_query] Matches only if all values match.
+   */
+
+  /**
+   * Represents a numeric or string range query.
+   * @template T
+   * @typedef {Object} GuildSearchRangeQuery
+   * @property {{ gte?: T, lte?: T }} range The range bounds.
+   */
+
+  /**
+   * Internal Discord safety signals used for filtering.
+   * @typedef {Object} GuildSearchSafetySignalsQuery
+   * @property {GuildSearchRangeQuery<number>} [unusual_dm_activity_until] Unusual DM activity time window.
+   * @property {GuildSearchRangeQuery<number>} [communication_disabled_until] Timeout window.
+   * @property {boolean} [unusual_account_activity] Whether the account is flagged as unusual.
+   * @property {boolean} [automod_quarantined_username] Whether AutoMod quarantined the username.
    */
 
   /**
@@ -239,9 +273,15 @@ class GuildMemberManager extends CachedManager {
    * @param {GuildSearchMembersOptions} options Options for searching members
    * @returns {Promise<Collection<Snowflake, GuildMember>>}
    */
-  async search({ query, limit = 1, cache = true } = {}) {
-    const data = await this.client.api.guilds(this.guild.id).members.search.get({ query: { query, limit } });
-    return data.reduce((col, member) => col.set(member.user.id, this._add(member, cache)), new Collection());
+  async search({ limit = 1, cache = true, ...queries } = {}) {
+    const data = await this.client.api.guilds(this.guild.id, "members-search").post({
+      data: {
+        limit,
+        ...queries
+      }
+    });
+
+    return data.members.reduce((col, { member }) => col.set(member.user.id, this._add(member, cache)), new Collection());
   }
 
   /**
