@@ -6973,16 +6973,16 @@ interface GuildSearchMembersOptionsSafetySignalsQuery {
 
 interface GuildSearchMembersOptionsFilterFields {
   usernames?: GuildSearchMembersOptionsUsernamesQuery | string;
-  roles?: GuildSearchMembersOptionsRoleQuery | RoleResolvable;
+  roles?: GuildSearchMembersOptionsRoleQuery | string;
   guildJoinedAt?: GuildSearchMembersOptionsRangeQuery<number | Date>;
   users?: GuildSearchMembersOptionsUserQuery | string;
-  joinSourceType?: GuildSearchMembersOptionsJoinSourceTypeQuery | (number | string);
+  joinSourceType?: GuildSearchMembersOptionsJoinSourceTypeQuery | GuildMemberJoinSourceTypes | string;
   safetySignals?: GuildSearchMembersOptionsSafetySignalsQuery;
 }
 
 interface GuildSearchMembersOptionsRoleQuery {
-  or?: RoleResolvable[];
-  and?: RoleResolvable[];
+  or?: string[];
+  and?: string[];
 }
 
 export interface GuildSearchMembersOptions extends Partial<GuildSearchMembersOptionsFilterFields> {
