@@ -227,30 +227,30 @@ class GuildMemberManager extends CachedManager {
   }
 
   /**
- * Options for searching guild members using logical filter queries.
- * @typedef {Object} GuildSearchMembersOptions
- * @property {GuildSearchQueryBlock} [or] Applies a logical OR to any nested filters.
- * @property {GuildSearchQueryBlock} [and] Applies a logical AND to any nested filters.
- * @property {number} [limit=1] The maximum number of members to return.
- * @property {boolean} [cache=true] Whether to cache the results.
- * @property {GuildSearchUsernamesQuery|string} [usernames] Filters by usernames using OR logic only, or a single username string.
- * @property {GuildSearchListQuery|string} [roles] Filters by roles using OR or AND logic, or a single role.
- * @property {GuildSearchRangeQueryNumber} [guildJoinedAt] Filters by guild join timestamp using range queries only.
- * @property {GuildSearchUserQuery|string} [users] Filters by users using OR logic only, or a single user string.
- * @property {GuildSearchJoinSourceTypeQuery|string} [joinSourceType] Filters by invite codes using OR logic only, or a single invite code.
- * @property {GuildSearchSafetySignalsQuery} [safetySignals] Internal safety filters.
+   * Options for searching guild members using logical filter queries.
+   * @typedef {Object} GuildSearchMembersOptions
+   * @property {GuildSearchQueryBlock} [or] Applies a logical OR to any nested filters.
+   * @property {GuildSearchQueryBlock} [and] Applies a logical AND to any nested filters.
+   * @property {number} [limit=1] The maximum number of members to return.
+   * @property {boolean} [cache=true] Whether to cache the results.
+   * @property {GuildSearchUsernamesQuery|string} [usernames] Filters by usernames using OR logic only, or a single username string.
+   * @property {GuildSearchListQuery|string} [roles] Filters by roles using OR or AND logic, or a single role.
+   * @property {GuildSearchRangeQueryNumber} [guildJoinedAt] Filters by guild join timestamp using range queries only.
+   * @property {GuildSearchUserQuery|string} [users] Filters by users using OR logic only, or a single user string.
+   * @property {GuildSearchJoinSourceTypeQuery|GuildMemberJoinSourceTypes|string} [joinSourceType] Filters by invite codes using OR logic only, or a single invite code.
+   * @property {GuildSearchSafetySignalsQuery} [safetySignals] Internal safety filters.
  */
 
-/**
- * A block of filters for AND/OR logic.
- * @typedef {Object} GuildSearchQueryBlock
- * @property {GuildSearchUsernamesQuery} [usernames] Filters by usernames using OR logic only.
- * @property {GuildSearchListQuery} [roles] Filters by roles using OR or AND logic.
- * @property {GuildSearchRangeQueryNumber} [guildJoinedAt] Filters by guild join timestamp using range queries only.
- * @property {GuildSearchUserQuery} [users] Filters by users using OR logic only.
- * @property {GuildSearchJoinSourceTypeQuery|GuildMemberJoinSourceTypes} [joinSourceType] Filters by invite codes using OR logic only.
- * @property {GuildSearchSafetySignalsQuery} [safetySignals] Internal safety filters with restrictions on certain fields.
- */
+  /**
+   * A block of filters for AND/OR logic.
+   * @typedef {Object} GuildSearchQueryBlock
+   * @property {GuildSearchUsernamesQuery} [usernames] Filters by usernames using OR logic only.
+   * @property {GuildSearchListQuery} [roles] Filters by roles using OR or AND logic.
+   * @property {GuildSearchRangeQueryNumber} [guildJoinedAt] Filters by guild join timestamp using range queries only.
+   * @property {GuildSearchUserQuery} [users] Filters by users using OR logic only.
+   * @property {GuildSearchJoinSourceTypeQuery|GuildMemberJoinSourceTypes} [joinSourceType] Filters by invite codes using OR logic only.
+   * @property {GuildSearchSafetySignalsQuery} [safetySignals] Internal safety filters with restrictions on certain fields.
+   */
 
   /**
    * Represents an OR or AND query with string values.
