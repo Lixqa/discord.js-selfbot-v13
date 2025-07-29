@@ -121,6 +121,7 @@ import {
   MessageReferenceTypes,
   SeparatorSpacingSizes,
   ApplicationType,
+  GuildMemberJoinSourceTypes
 } from './enums';
 import {
   APIApplicationRoleConnectionMetadata,
@@ -6916,9 +6917,9 @@ export interface GuildWidgetSettingsData {
   channel: GuildChannelResolvable | null;
 }
 
-export type GuildSearchMembersOptionsRangeValue = number | string;
+type GuildSearchMembersOptionsRangeValue = number | string;
 
-export interface GuildSearchMembersOptionsRangeQuery<
+interface GuildSearchMembersOptionsRangeQuery<
   T extends GuildSearchMembersOptionsRangeValue = number,
 > {
   range: {
@@ -6927,59 +6928,59 @@ export interface GuildSearchMembersOptionsRangeQuery<
   };
 }
 
-export interface GuildSearchMembersOptionsOrQuery {
+interface GuildSearchMembersOptionsOrQuery {
   or: string[];
 }
 
-export interface GuildSearchMembersOptionsAndQuery {
+interface GuildSearchMembersOptionsAndQuery {
   and: string[];
 }
 
-export type GuildSearchMembersOptionsListQuery =
+type GuildSearchMembersOptionsListQuery =
   | GuildSearchMembersOptionsOrQuery
   | GuildSearchMembersOptionsAndQuery;
 
-export interface GuildSearchMembersOptionsUsernamesQuery {
+interface GuildSearchMembersOptionsUsernamesQuery {
   or: string[];
 }
 
-export interface GuildSearchMembersOptionsUserQuery {
+interface GuildSearchMembersOptionsUserQuery {
   or: string[];
 }
 
-export interface GuildSearchMembersOptionsSourceInviteCodeQuery {
-  or: (GuildInviteSourceCode | string)[];
+interface GuildSearchMembersOptionsJoinSourceTypeQuery {
+  or: (GuildMemberJoinSourceTypes | string)[];
 }
 
-export type GuildSearchMembersOptionsRangeable<
+type GuildSearchMembersOptionsRangeable<
   T extends GuildSearchMembersOptionsRangeValue = number,
 > = GuildSearchMembersOptionsRangeQuery<T>;
 
-export type GuildSearchMembersOptionsFlexibleQuery<
+type GuildSearchMembersOptionsFlexibleQuery<
   T extends GuildSearchMembersOptionsRangeValue = number,
 > = GuildSearchMembersOptionsListQuery | GuildSearchMembersOptionsRangeable<T>;
 
-export interface GuildSearchMembersOptionsSafetySignalsOrOnlyQuery {
+interface GuildSearchMembersOptionsSafetySignalsOrOnlyQuery {
   or: (number | Date | boolean)[];
 }
 
-export interface GuildSearchMembersOptionsSafetySignalsQuery {
+interface GuildSearchMembersOptionsSafetySignalsQuery {
   unusualDmActivityUntil?: GuildSearchMembersOptionsRangeQuery<number | Date> | GuildSearchMembersOptionsSafetySignalsOrOnlyQuery;
   communicationDisabledUntil?: GuildSearchMembersOptionsRangeQuery<number | Date> | GuildSearchMembersOptionsSafetySignalsOrOnlyQuery;
   unusualAccountActivity?: boolean | GuildSearchMembersOptionsSafetySignalsOrOnlyQuery;
   automodQuarantinedUsername?: boolean | GuildSearchMembersOptionsSafetySignalsOrOnlyQuery;
 }
 
-export interface GuildSearchMembersOptionsFilterFields {
+interface GuildSearchMembersOptionsFilterFields {
   usernames?: GuildSearchMembersOptionsUsernamesQuery | string;
   roles?: GuildSearchMembersOptionsRoleQuery | RoleResolvable;
   guildJoinedAt?: GuildSearchMembersOptionsRangeQuery<number | Date>;
   users?: GuildSearchMembersOptionsUserQuery | string;
-  sourceInviteCode?: GuildSearchMembersOptionsSourceInviteCodeQuery | (number | string);
+  joinSourceType?: GuildSearchMembersOptionsJoinSourceTypeQuery | (number | string);
   safetySignals?: GuildSearchMembersOptionsSafetySignalsQuery;
 }
 
-export interface GuildSearchMembersOptionsRoleQuery {
+interface GuildSearchMembersOptionsRoleQuery {
   or?: RoleResolvable[];
   and?: RoleResolvable[];
 }

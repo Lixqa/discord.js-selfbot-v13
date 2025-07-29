@@ -237,7 +237,7 @@ class GuildMemberManager extends CachedManager {
    * @property {GuildSearchListQuery|RoleResolvable} [roles] Filters by roles using OR or AND logic, or a single role.
    * @property {GuildSearchRangeQuery<number>} [guildJoinedAt] Filters by guild join timestamp using range queries only.
    * @property {GuildSearchUserQuery|string} [users] Filters by users using OR logic only, or a single user string.
-   * @property {GuildSearchSourceInviteCodeQuery|string} [sourceInviteCode] Filters by invite codes using OR logic only, or a single invite code.
+   * @property {GuildSearchMembersOptionsJoinSourceTypeQuery|string} [joinSourceType] Filters by invite codes using OR logic only, or a single invite code.
    * @property {GuildSearchSafetySignalsQuery} [safetySignals] Internal safety filters.
    */
 
@@ -248,7 +248,7 @@ class GuildMemberManager extends CachedManager {
    * @property {GuildSearchListQuery} [roles] Filters by roles using OR or AND logic.
    * @property {GuildSearchRangeQuery<number>} [guildJoinedAt] Filters by guild join timestamp using range queries only.
    * @property {GuildSearchUserQuery} [users] Filters by users using OR logic only.
-   * @property {GuildSearchSourceInviteCodeQuery} [sourceInviteCode] Filters by invite codes using OR logic only.
+   * @property {GuildSearchJoinSourceTypeQuery} [joinSourceType] Filters by invite codes using OR logic only.
    * @property {GuildSearchSafetySignalsQuery} [safetySignals] Internal safety filters with restrictions on certain fields.
    */
 
@@ -272,9 +272,9 @@ class GuildMemberManager extends CachedManager {
    */
 
   /**
-   * Represents an OR-only query for source invite codes.
-   * @typedef {Object} GuildSearchSourceInviteCodeQuery
-   * @property {string[]} or Matches if any invite codes match.
+   * Represents an OR-only query for join source types.
+   * @typedef {Object} GuildSearchJoinSourceTypeQuery
+   * @property {string[]} or Matches if any join source types.
    */
 
   /**
@@ -340,14 +340,14 @@ class GuildMemberManager extends CachedManager {
         }
       }
 
-      if (key === 'sourceInviteCode' && value) {
+      if (key === 'joinSourceType' && value) {
         if (value.or) {
           return { or_query: value.or };
         }
         if (value.and) {
-          throw new TypeError("'and' is not allowed for 'sourceInviteCode'. Use 'or' instead.");
+          throw new TypeError("'and' is not allowed for 'joinSourceType'. Use 'or' instead.");
         }
-        if (typeof value === 'string') {
+        if (typeof value === 'string' || typeof value === 'number') {
           return { or_query: [value] };
         }
       }
@@ -488,7 +488,7 @@ class GuildMemberManager extends CachedManager {
    * - usernames: Only supports 'or' queries
    * - users: Only supports 'or' queries and single string values
    * - guildJoinedAt: Only supports range queries
-   * - sourceInviteCode: Only supports 'or' queries
+   * - joinSourceType: Only supports 'or' queries
    * - safetySignals.unusualDmActivityUntil: Only supports 'or' queries
    * - safetySignals.communicationDisabledUntil: Only supports 'or' queries
    * - safetySignals.unusualAccountActivity: Only supports 'or' queries
