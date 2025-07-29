@@ -237,7 +237,7 @@ class GuildMemberManager extends CachedManager {
    * @property {GuildSearchListQuery|string} [roles] Filters by roles using OR or AND logic, or a single role.
    * @property {GuildSearchRangeQueryNumber} [guildJoinedAt] Filters by guild join timestamp using range queries only.
    * @property {GuildSearchUserQuery|string} [users] Filters by users using OR logic only, or a single user string.
-   * @property {GuildSearchJoinSourceTypeQuery|GuildMemberJoinSourceTypes|string} [joinSourceType] Filters by invite codes using OR logic only, or a single invite code.
+   * @property {GuildSearchJoinSourceTypeQuery|number|string} [joinSourceType] Filters by invite codes using OR logic only, or a single invite code.
    * @property {GuildSearchSafetySignalsQuery} [safetySignals] Internal safety filters.
    */
 
@@ -248,7 +248,7 @@ class GuildMemberManager extends CachedManager {
    * @property {GuildSearchListQuery} [roles] Filters by roles using OR or AND logic.
    * @property {GuildSearchRangeQueryNumber} [guildJoinedAt] Filters by guild join timestamp using range queries only.
    * @property {GuildSearchUserQuery} [users] Filters by users using OR logic only.
-   * @property {GuildSearchJoinSourceTypeQuery|GuildMemberJoinSourceTypes} [joinSourceType] Filters by invite codes using OR logic only.
+   * @property {GuildSearchJoinSourceTypeQuery|number} [joinSourceType] Filters by invite codes using OR logic only.
    * @property {GuildSearchSafetySignalsQuery} [safetySignals] Internal safety filters with restrictions on certain fields.
    */
 
@@ -274,7 +274,7 @@ class GuildMemberManager extends CachedManager {
   /**
    * Represents an OR-only query for join source types.
    * @typedef {Object} GuildSearchJoinSourceTypeQuery
-   * @property {(GuildMemberJoinSourceTypes|string)[]} or Matches if any join source types.
+   * @property {(number|string)[]} or Matches if any join source types.
    */
 
   /**
