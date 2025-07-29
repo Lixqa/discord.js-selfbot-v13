@@ -9,7 +9,7 @@ const { Error, TypeError, RangeError } = require('../errors');
 const BaseGuildVoiceChannel = require('../structures/BaseGuildVoiceChannel');
 const { GuildMember } = require('../structures/GuildMember');
 const { Role } = require('../structures/Role');
-const { Events, Opcodes, GuildMemberJoinSourceTypes } = require('../util/Constants');
+const { Events, Opcodes } = require('../util/Constants');
 const { PartialTypes } = require('../util/Constants');
 const DataResolver = require('../util/DataResolver');
 const GuildMemberFlags = require('../util/GuildMemberFlags');
@@ -239,7 +239,7 @@ class GuildMemberManager extends CachedManager {
    * @property {GuildSearchUserQuery|string} [users] Filters by users using OR logic only, or a single user string.
    * @property {GuildSearchJoinSourceTypeQuery|GuildMemberJoinSourceTypes|string} [joinSourceType] Filters by invite codes using OR logic only, or a single invite code.
    * @property {GuildSearchSafetySignalsQuery} [safetySignals] Internal safety filters.
- */
+   */
 
   /**
    * A block of filters for AND/OR logic.
